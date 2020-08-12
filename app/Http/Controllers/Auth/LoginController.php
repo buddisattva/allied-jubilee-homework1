@@ -3,21 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\User\Contracts\RegisterService;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use App\Services\User\Contracts\LoginService;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
     use AuthenticatesUsers;
 
     /**
@@ -27,13 +19,36 @@ class LoginController extends Controller
      */
     protected $redirectTo = '/home';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    private $loginService;
+    private $registerService;
+
+    public function __construct(LoginService $loginService, RegisterService $registerService)
     {
         $this->middleware('guest')->except('logout');
+
+        $this->loginService = $loginService;
+        $this->registerService = $registerService;
+    }
+
+    public function login(Request $request)
+    {
+        $this->loginService->validateLogin($request);
+
+        $registerData = [
+            'name' => $request->get('email'),
+            'email' => $request->get('email'),
+            'password' => $request->get('password')
+        ];
+        if (!$this->registerService->isRegistered($request->get('email')) &&
+            $this->registerService->isCorrectRegisterData($registerData)) {
+            // if the user is not registered and provides proper email and password
+            $this->registerService->createAccount($registerData);
+        }
+
+        if ($this->loginService->attemptLogin($request)) {
+            return $this->loginService->sendLoginResponse($request);
+        }
+
+        return $this->loginService->sendFailedLoginResponse($request);
     }
 }
