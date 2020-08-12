@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Services\User\Contracts\LoginService;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Foundation\Auth\RedirectsUsers;
 use Illuminate\Http\RedirectResponse;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class BasicLoginService implements Contracts\LoginService
+class BasicLoginService implements LoginService
 {
     use RedirectsUsers;
 
@@ -53,16 +54,13 @@ class BasicLoginService implements Contracts\LoginService
      * Send the response after the user was authenticated.
      *
      * @param Request $request
-     * @param bool $isNewbie
      * @return RedirectResponse
      */
-    public function sendLoginResponse(Request $request, bool $isNewbie)
+    public function sendLoginResponse(Request $request)
     {
         $request->session()->regenerate();
 
-        return redirect()->intended($this->redirectPath(), 302, [
-            'Is-Newbie' => (int) $isNewbie
-        ]);
+        return redirect()->intended($this->redirectPath());
     }
 
     /**
@@ -99,5 +97,17 @@ class BasicLoginService implements Contracts\LoginService
     private function credentials(Request $request): array
     {
         return $request->only('email', 'password');
+    }
+
+    /**
+     * Set isNewbie in session.
+     * @param bool $isNewbie
+     * @return bool
+     */
+    public function setIsNewbie(bool $isNewbie): bool
+    {
+        session()->put('isNewbie', $isNewbie);
+
+        return true;
     }
 }

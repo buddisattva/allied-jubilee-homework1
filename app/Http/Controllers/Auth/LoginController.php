@@ -44,7 +44,8 @@ class LoginController extends Controller
         }
 
         if ($this->loginService->attemptLogin($request)) {
-            return $this->loginService->sendLoginResponse($request, $isNewbie);
+            $this->loginService->setIsNewbie($isNewbie);
+            return $this->loginService->sendLoginResponse($request);
         }
 
         return $this->loginService->sendFailedLoginResponse($request);

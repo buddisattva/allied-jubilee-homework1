@@ -10,7 +10,9 @@ interface LoginService
 
     public function attemptLogin(Request $request): bool;
 
-    public function sendLoginResponse(Request $request, bool $isNewbie);
+    public function sendLoginResponse(Request $request);
 
     public function sendFailedLoginResponse(Request $request);
+
+    public function setIsNewbie(bool $isNewbie): bool;
 }

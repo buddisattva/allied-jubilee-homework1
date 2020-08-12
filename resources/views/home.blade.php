@@ -14,7 +14,11 @@
                         </div>
                     @endif
 
-                    You are logged in!
+                    @if (session('isNewbie'))
+                        You are registered and logged in!
+                    @else
+                        You are logged in!
+                    @endif
                 </div>
             </div>
         </div>
