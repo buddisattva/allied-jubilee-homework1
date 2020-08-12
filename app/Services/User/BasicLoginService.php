@@ -53,13 +53,16 @@ class BasicLoginService implements Contracts\LoginService
      * Send the response after the user was authenticated.
      *
      * @param Request $request
+     * @param bool $isNewbie
      * @return RedirectResponse
      */
-    public function sendLoginResponse(Request $request)
+    public function sendLoginResponse(Request $request, bool $isNewbie)
     {
         $request->session()->regenerate();
 
-        return redirect()->intended($this->redirectPath());
+        return redirect()->intended($this->redirectPath(), 302, [
+            'Is-Newbie' => (int) $isNewbie
+        ]);
     }
 
     /**
