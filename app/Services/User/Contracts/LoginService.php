@@ -8,7 +8,7 @@ interface LoginService
 {
     public function validateLogin(Request $request): bool;
 
-    public function attemptLogin(Request $request): bool;
+    public function attemptLogin(array $data): bool;
 
     public function sendLoginResponse(Request $request);
 

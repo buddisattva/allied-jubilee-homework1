@@ -25,10 +25,8 @@ class BasicLoginService implements LoginService
      */
     public function validateLogin(Request $request): bool
     {
-        $username = 'email';
-
         $validator = Validator::make($request->all(), [
-            $username => 'required|string|email',
+            'email' => 'required|string|email',
             'password' => 'required|string|min:6',
         ]);
 
@@ -42,12 +40,12 @@ class BasicLoginService implements LoginService
     /**
      * Attempt to log the user into the application.
      *
-     * @param Request $request
+     * @param array $data
      * @return bool
      */
-    public function attemptLogin(Request $request): bool
+    public function attemptLogin(array $data): bool
     {
-        return $this->guard()->attempt($this->credentials($request));
+        return $this->guard()->attempt($data);
     }
 
     /**
@@ -86,17 +84,6 @@ class BasicLoginService implements LoginService
     private function guard(): StatefulGuard
     {
         return Auth::guard();
-    }
-
-    /**
-     * Get the needed authorization credentials from the request.
-     *
-     * @param Request $request
-     * @return array
-     */
-    private function credentials(Request $request): array
-    {
-        return $request->only('email', 'password');
     }
 
     /**

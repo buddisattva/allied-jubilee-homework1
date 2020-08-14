@@ -47,6 +47,9 @@
                             </div>
                         </div>
                     </form>
+                    <a href="{{ $facebook }}" class="btn btn-primary">
+                        Login with Facebook
+                    </a>
                 </div>
             </div>
         </div>
